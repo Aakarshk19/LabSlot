@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "LabSlot API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api/v1" },
+    { "key": "csrf", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register student",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { const j = pm.response.json(); pm.collectionVariables.set('csrf', j.data.csrfToken); }"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Asha Kumar\",\n  \"email\": \"asha@college.edu\",\n  \"password\": \"StudentPass123\",\n  \"department\": \"Computer Science\"\n}" },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{ "listen": "test", "script": { "exec": ["const j = pm.response.json(); if (j.data && j.data.csrfToken) pm.collectionVariables.set('csrf', j.data.csrfToken);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@labslot.local\",\n  \"password\": \"StudentPass123\"\n}" },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Me",
+          "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "X-CSRF-Token", "value": "{{csrf}}" }],
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resources",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{baseUrl}}/resources?search=&category=&page=1" } },
+        { "name": "Get one", "request": { "method": "GET", "url": "{{baseUrl}}/resources/:id" } },
+        { "name": "Availability", "request": { "method": "GET", "url": "{{baseUrl}}/resources/:id/availability?date=2026-10-20" } }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-CSRF-Token", "value": "{{csrf}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"resourceId\": \"RESOURCE_ID\",\n  \"startTime\": \"2026-10-20T10:00:00.000Z\",\n  \"endTime\": \"2026-10-20T11:00:00.000Z\",\n  \"purpose\": \"Electronics lab experiment\"\n}" },
+            "url": "{{baseUrl}}/bookings"
+          }
+        },
+        { "name": "My bookings", "request": { "method": "GET", "url": "{{baseUrl}}/bookings/my" } },
+        { "name": "History", "request": { "method": "GET", "url": "{{baseUrl}}/bookings/history" } },
+        { "name": "Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/bookings/dashboard" } },
+        {
+          "name": "Cancel",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "X-CSRF-Token", "value": "{{csrf}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Schedule changed\"\n}" },
+            "url": "{{baseUrl}}/bookings/:id/cancel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Admin login",
+          "event": [{ "listen": "test", "script": { "exec": ["const j = pm.response.json(); if (j.data && j.data.csrfToken) pm.collectionVariables.set('csrf', j.data.csrfToken);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@labslot.local\",\n  \"password\": \"ChangeThisAdminPassword1\"\n}" },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        { "name": "Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/admin/dashboard" } },
+        { "name": "All bookings", "request": { "method": "GET", "url": "{{baseUrl}}/admin/bookings" } },
+        {
+          "name": "Approve",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "X-CSRF-Token", "value": "{{csrf}}" }],
+            "url": "{{baseUrl}}/admin/bookings/:id/approve"
+          }
+        },
+        { "name": "Users", "request": { "method": "GET", "url": "{{baseUrl}}/admin/users" } },
+        { "name": "Reports", "request": { "method": "GET", "url": "{{baseUrl}}/admin/reports" } }
+      ]
+    }
+  ]
+}

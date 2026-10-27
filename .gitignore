@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+uploads/
+*.tmp
+mongodb-data/
+client/test-results/
+server/coverage/
+client/coverage/

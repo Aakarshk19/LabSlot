@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: labslot-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - labslot_mongo_data:/data/db
+    command: ["mongod", "--bind_ip_all"]
+
+volumes:
+  labslot_mongo_data:
